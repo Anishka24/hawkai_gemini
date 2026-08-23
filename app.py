@@ -142,9 +142,9 @@ Regulatory excerpts:
 {context}"""
     client = genai.Client(api_key=api_key)
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-3.6-flash",",
         contents=prompt,
-        config=types.GenerateContentConfig(temperature=0.1, max_output_tokens=1400),
+        config=types.GenerateContentConfig(max_output_tokens=1400),
     )
     return response.text
 
