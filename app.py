@@ -96,7 +96,7 @@ def display_sources(items):
 
 def answer_question(question):
     st.session_state.chat_history.append({"role": "user", "content": question})
-    with st.chat_message("assistant", avatar="✦"):
+    with st.chat_message("assistant", avatar="🤖")::
         with st.spinner("Reading your documents and composing an answer…"):
             result = rag.answer_question(
                 st.session_state.llm,
@@ -147,7 +147,7 @@ def chat_view():
         return
 
     for index, turn in enumerate(st.session_state.chat_history):
-        avatar = "👤" if turn["role"] == "user" else "✦"
+        avatar = "👤" if turn["role"] == "user" else "🤖"
         with st.chat_message(turn["role"], avatar=avatar):
             st.markdown(turn["content"])
             if turn["role"] == "assistant":
