@@ -163,12 +163,10 @@ def chat_view():
                     st.toast("Thanks — feedback saved.")
 
     st.markdown('<div class="quick-label">TRY A STARTER QUESTION</div>', unsafe_allow_html=True)
-    quick_cols = st.columns(3)
-    suggestions = ["Summarize this document", "What are the key risks?", "What actions are recommended?"]
-    for column, suggestion in zip(quick_cols, suggestions):
-        if column.button(suggestion, use_container_width=True):
-            st.session_state.quick_question = suggestion
-            st.rerun()
+
+    if st.button("Summarize this document", use_container_width=True):
+        st.session_state.quick_question = "Summarize this document"
+        st.rerun()
 
     question = st.chat_input("Ask anything about your documents…")
     question = question or st.session_state.pop("quick_question", None)
