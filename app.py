@@ -223,4 +223,8 @@ def insights_view():
         st.markdown('<div class="empty"><div class="empty-icon">📊</div><h3>No insights yet</h3><p>Add a document to populate your dashboard.</p></div>', unsafe_allow_html=True)
 
 
-{"Chat": chat_view, "Library": library_view, "Insights": insights_view}[view]()
+{
+    "Upload documents": library_view,
+    "Ask your documents": chat_view,
+    "Document overview": insights_view,
+}[view]()
