@@ -18,7 +18,7 @@ CONDENSE_PROMPT = """Rewrite the follow-up question into a standalone question u
 
 History:\n{history}\n\nFollow-up question: {question}\nStandalone question:"""
 
-def get_llm(): return ChatGoogleGenerativeAI(model=LLM_MODEL_NAME, temperature=.5)
+def get_llm(): return ChatGoogleGenerativeAI(model=LLM_MODEL_NAME, temperature=.35)
 def get_embeddings(): return HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
 def load_existing_vectorstore(embeddings):
     return Chroma(persist_directory=CHROMA_DB_DIR, embedding_function=embeddings) if os.path.exists(CHROMA_DB_DIR) and os.listdir(CHROMA_DB_DIR) else None
@@ -68,14 +68,37 @@ def retrieve_relevant(vectorstore, query, k=DEFAULT_RETRIEVAL_K, threshold=DEFAU
     return [(doc,score) for doc,score in scored if score>=threshold] or scored[:1]
 def confidence_label(score): return ("High","high") if score>=.75 else (("Medium","medium") if score>=.5 else ("Low","low"))
 
+def response_text(response):
+    """Return readable Gemini text across LangChain response formats.
+
+    Recent Gemini integrations can return content as a list of blocks such
+    as ``[{"type": "text", "text": "..."}]``. Rendering that list
+    directly caused the raw object shown in the old interface.
+    """
+    content = getattr(response, "content", response)
+    if isinstance(content, str):
+        return content.strip()
+    if isinstance(content, list):
+        parts = []
+        for block in content:
+            if isinstance(block, dict):
+                value = block.get("text") or block.get("content")
+            else:
+                value = getattr(block, "text", None) or getattr(block, "content", None)
+            if isinstance(value, str):
+                parts.append(value)
+        if parts:
+            return "\n".join(parts).strip()
+    return str(content).strip()
+
 def answer_question(llm, vectorstore, history, question, k=DEFAULT_RETRIEVAL_K, threshold=DEFAULT_RELEVANCE_THRESHOLD):
     standalone=question
     if history:
-        try: standalone=(llm.invoke(CONDENSE_PROMPT.format(history=_history(history),question=question)).content or question).strip()
+        try: standalone=response_text(llm.invoke(CONDENSE_PROMPT.format(history=_history(history),question=question))) or question
         except Exception: pass
     relevant=retrieve_relevant(vectorstore,standalone,k,threshold)
     if not relevant: return {"answer":"I couldn't find anything relevant in the knowledge base.","sources":[],"confidence_label":"Low","confidence_class":"low"}
-    answer=llm.invoke(ANSWER_PROMPT.format(history=_history(history),context="\n\n".join(doc.page_content for doc,_ in relevant),question=question)).content
+    answer=response_text(llm.invoke(ANSWER_PROMPT.format(history=_history(history),context="\n\n".join(doc.page_content for doc,_ in relevant),question=question)))
     label,css_class=confidence_label(max(score for _,score in relevant))
     return {"answer":answer,"sources":relevant,"confidence_label":label,"confidence_class":css_class}
 
