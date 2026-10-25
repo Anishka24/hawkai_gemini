@@ -121,7 +121,7 @@ with st.sidebar:
     st.markdown('<div class="brand"><span class="brand-mark">✦</span> RAGWise</div>', unsafe_allow_html=True)
     st.caption("Your private space for asking better questions of your documents.")
     st.divider()
-    view = st.radio("Navigate", ["Chat", "Library", "Insights"], label_visibility="collapsed")
+    view = st.radio("Navigate", ["Upload documents", "Ask your documents", "Document overview"], label_visibility="collapsed")
     st.divider()
     st.caption("ANSWER QUALITY")
     st.session_state.relevance_threshold = st.slider(
