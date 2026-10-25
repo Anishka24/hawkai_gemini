@@ -9,7 +9,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 DATA_DIR = os.getenv("RAG_DATA_DIR", os.path.join(tempfile.gettempdir(), "ragwise_data"))
 CHROMA_DB_DIR, UPLOAD_DIR, FEEDBACK_LOG = (os.path.join(DATA_DIR, x) for x in ("chroma_db", "uploaded_docs", "feedback_log.csv"))
-EMBEDDING_MODEL_NAME, LLM_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2", "gemini-2.5-flash"
+EMBEDDING_MODEL_NAME, LLM_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2", "gemini-3.5-flash-lite"
 DEFAULT_RETRIEVAL_K, DEFAULT_RELEVANCE_THRESHOLD = 6, .5
 ANSWER_PROMPT = """You are a helpful assistant answering only from the supplied document excerpts. If the excerpts do not contain the answer, say that you cannot answer based on the provided documents. Do not guess.
 
