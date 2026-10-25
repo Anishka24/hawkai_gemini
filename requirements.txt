@@ -1,7 +1,10 @@
-streamlit>=1.40
-google-genai>=1.0.0
-faiss-cpu>=1.9.0
-numpy>=1.26.0
-pypdf>=5.0.0
-python-dotenv>=1.0.0
-sentence-transformers>=3.0.0
+langchain-core
+langchain-text-splitters
+langchain-community
+langchain-chroma
+langchain-huggingface
+sentence-transformers
+langchain-google-genai
+chromadb
+pypdf
+streamlit
